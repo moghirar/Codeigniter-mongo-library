@@ -1770,6 +1770,50 @@ Class Mongo_db{
 		}
 	}
 
+
+    /**
+     *
+     * --------------------------------------------------------------------------------
+     * Bulk Update
+     * --------------------------------------------------------------------------------
+     *
+     * @param $collection
+     * @param array $operations
+     * @param bool $ordered
+     */
+    public function bulkUpdate($collection, $operations = array(), $ordered = TRUE) {
+
+        if (empty($collection))
+        {
+            show_error("No Mongo collection selected", 500);
+        }
+
+        if (empty($operations) || !is_array($operations))
+        {
+            show_error("Invalid operation to perform", 500);
+        }
+
+        $collection = $this->connect->selectCollection($this->database, $collection);
+        $batch = new MongoUpdateBatch($collection, ['ordered' => $ordered]);
+
+        foreach ($operations as $key => $request) {
+            $batch->add($request);
+        }
+
+        try{
+            return $batch->execute();
+        } catch (Exception $e) {
+            if(isset($this->debug) == TRUE && $this->debug == TRUE)
+            {
+                show_error("Updating data into MongoDB failed: {$e->getMessage()}", 500);
+            }
+            else
+            {
+                show_error("Updating data into MongoDB failed", 500);
+            }
+        }
+    }
+
 	/**
 	* --------------------------------------------------------------------------------
 	* _clear
