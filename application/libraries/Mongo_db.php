@@ -1777,9 +1777,19 @@ Class Mongo_db{
      * Bulk Update
      * --------------------------------------------------------------------------------
      *
-     * @param $collection
+     * Multiple updates in single request
+     *
+     * @param string $collection
      * @param array $operations
+     * Example: array([
+     *   'q' => ['x' => c],
+     *   'u' => [
+     *      '$set' => ['x' => $a, 'y' => $b],
+     *   ],
+     *   'upsert' => false
+     *   ])
      * @param bool $ordered
+     * @return array
      */
     public function bulkUpdate($collection, $operations = array(), $ordered = TRUE) {
 
